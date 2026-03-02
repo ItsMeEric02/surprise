@@ -9,12 +9,31 @@
     
     <style>
         /* --- General Page Styles --- */
-        body { margin: 0; padding: 0; font-family: 'Lora', serif; background: linear-gradient(135deg, #fffbf0 0%, #ffe6e6 100%); color: #4a3b32; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Lora', serif; 
+            background: radial-gradient(circle at center, #4a3224 0%, #1a100c 100%); 
+            color: #fdf4f0; 
+            overflow-x: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
         
         /* --- START SCREEN WITH PASSWORD --- */
-        #start-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fffbf0; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        #start-screen { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: radial-gradient(circle at center, #4a3224 0%, #1a100c 100%); 
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; 
+        }
         #start-screen h2 { font-family: 'Great Vibes', cursive; font-size: 4rem; color: #b8860b; margin-bottom: 10px; text-align: center; }
-        .password-prompt { font-size: 1.2rem; color: #6b5a4e; margin-bottom: 20px; text-align: center; }
+        .password-prompt { 
+            font-size: 1.2rem; 
+            color: #e8d8c8; 
+            margin-bottom: 20px; 
+            text-align: center; 
+        }
         #password-input { padding: 12px 20px; font-size: 1.2rem; font-family: 'Lora', serif; border: 2px solid #d4af37; border-radius: 25px; margin-bottom: 10px; text-align: center; outline: none; background: rgba(255, 255, 255, 0.8); color: #4a3b32; width: 200px; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
         #password-input:focus { box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); border-color: #cda630; }
         #error-message { color: #e63946; font-family: 'Lora', serif; font-size: 0.95rem; margin-top: 0; margin-bottom: 20px; height: 20px; opacity: 0; transition: opacity 0.3s; font-style: italic; }
@@ -89,7 +108,13 @@
         header { text-align: center; padding: 40px 20px 0px; position: relative; z-index: 3; }
         h1 { font-family: 'Great Vibes', cursive; font-size: 5rem; color: #b8860b; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); opacity: 0; }
         body.started h1 { animation: fadeSlideDown 1s ease-out 0.2s forwards; }
-        p.subtitle { font-size: 1.4rem; color: #6b5a4e; margin-top: 10px; font-style: italic; opacity: 0; }
+        p.subtitle { 
+            font-size: 1.4rem; 
+            color: #e8d8c8; 
+            margin-top: 10px; 
+            font-style: italic; 
+            opacity: 0; 
+        }
         body.started p.subtitle { animation: fadeSlideDown 1s ease-out 0.6s forwards; }
         .instruction-note { font-size: 1.1rem; color: #d4af37; margin-top: 10px; font-style: italic; opacity: 0; }
         body.started .instruction-note { animation: fadeSlideDown 1s ease-out 1s forwards, pulseText 2.5s infinite 2s; }
@@ -149,7 +174,17 @@
         .photo-desc { font-family: 'Lora', serif; font-size: 1.1rem; margin: 0; max-width: 600px; line-height: 1.5; }
         .close-btn { position: absolute; top: 20px; right: 30px; font-size: 40px; font-weight: bold; color: #fff; cursor: pointer; transition: color 0.3s; z-index: 1001; }
         .close-btn:hover { color: #d4af37; }
-        footer { text-align: center; padding: 20px; font-size: 1.1rem; color: #8c7a6e; position: absolute; bottom: 0; width: 100%; z-index: 2; background: linear-gradient(to top, rgba(255,246,230, 1), transparent); }
+        
+        /* --- FIXED FOOTER --- */
+        footer { 
+            text-align: center; 
+            padding: 20px; 
+            font-size: 1.1rem; 
+            color: #e8d8c8; 
+            width: 100%; 
+            z-index: 20; 
+            background: linear-gradient(to top, rgba(26, 16, 12, 1), transparent); 
+        }
 
         /* Make sure the hint is hidden by default on Desktop */
         .desktop-hint { display: none; }
@@ -176,7 +211,10 @@
             .bouquet-container { transform: scale(0.65); margin-top: -30px; }
             .center-video-circle { width: 600px; height: 600px; } 
             .bouquet-ribbon { transform: translate(-50%, 160px) scale(0.6) !important; } 
+            
+            /* Footer adjustments for mobile */
             footer { font-size: 0.9rem; padding: 15px; }
+            
             .close-btn { top: 10px; right: 20px; font-size: 30px; } 
             .photo-date { font-size: 1.2rem; }
             .photo-desc { font-size: 1rem; padding: 0 15px; } 
@@ -387,4 +425,3 @@
     </script>
 </body>
 </html>
-
