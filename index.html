@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eric & Abi Day!</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- General Page Styles --- */
+        body { margin: 0; padding: 0; font-family: 'Lora', serif; background: linear-gradient(135deg, #fffbf0 0%, #ffe6e6 100%); color: #4a3b32; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* --- START SCREEN WITH PASSWORD --- */
+        #start-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fffbf0; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        #start-screen h2 { font-family: 'Great Vibes', cursive; font-size: 4rem; color: #b8860b; margin-bottom: 10px; text-align: center; }
+        .password-prompt { font-size: 1.2rem; color: #6b5a4e; margin-bottom: 20px; text-align: center; }
+        #password-input { padding: 12px 20px; font-size: 1.2rem; font-family: 'Lora', serif; border: 2px solid #d4af37; border-radius: 25px; margin-bottom: 10px; text-align: center; outline: none; background: rgba(255, 255, 255, 0.8); color: #4a3b32; width: 200px; transition: box-shadow 0.3s ease, border-color 0.3s ease; }
+        #password-input:focus { box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); border-color: #cda630; }
+        #error-message { color: #e63946; font-family: 'Lora', serif; font-size: 0.95rem; margin-top: 0; margin-bottom: 20px; height: 20px; opacity: 0; transition: opacity 0.3s; font-style: italic; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+        .shake-error { animation: shake 0.4s ease-in-out; border-color: #e63946 !important; }
+        #start-btn { padding: 15px 40px; font-family: 'Lora', serif; font-size: 1.2rem; color: #fff; background: linear-gradient(to right, #d4af37, #cda630); border: none; border-radius: 30px; cursor: pointer; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        #start-btn:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(212, 175, 55, 0.6); }
+
+        /* --- ENTRANCE ANIMATIONS --- */
+        @keyframes fadeSlideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideFadeInLeft { from { opacity: 0; left: -10%; } to { opacity: 1; left: 5%; } }
+        @keyframes slideFadeInRight { from { opacity: 0; right: -10%; } to { opacity: 1; right: 5%; } }
+        @keyframes dreamyEntrance { from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); } to { opacity: 0.5; transform: translate(-50%, -50%) scale(1); } }
+
+      /* --- Background Video Styles (Parallel Stack) --- */
+/* --- Parallel Stack Container --- */
+.parallel-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    opacity: 0;
+    width: 480px !important;
+    height: 100vh; /* Takes full height to prevent overlapping center photos */
+}
+
+/* THE SLOTS: These act as fixed 'frames' so videos don't become gigantic */
+.slot-portrait {
+    width: 270px !important;
+    height: 480px !important;
+    overflow: hidden;
+    border-radius: 12px;
+    position: relative;
+    background: #000;
+}
+
+.slot-landscape {
+    width: 480px !important;
+    height: 270px !important;
+    overflow: hidden;
+    border-radius: 12px;
+    position: relative;
+    background: #000;
+}
+
+/* THE VIDEO LOCKS: Content only, no layout impact */
+.portrait-lock {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.landscape-lock {
+    width: 270px !important;  /* Logic: Swap W/H for rotation */
+    height: 480px !important; 
+    object-fit: cover !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Rotates only the content, scale ensures it fills the 480px width */
+    transform: translate(-50%, -50%) rotate(270deg) scale(1.8) !important;
+}
+
+body.started .video-left { animation: slideFadeInLeft 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards; }
+body.started .video-right { animation: slideFadeInRight 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards; }
+
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; z-index: 2; padding-bottom: 60px; }
+        .heart { position: fixed; top: -10vh; font-size: 1.5rem; color: rgba(255, 153, 171, 0.6); pointer-events: none; animation: fall linear forwards; z-index: 0; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+
+        header { text-align: center; padding: 40px 20px 0px; position: relative; z-index: 3; }
+        h1 { font-family: 'Great Vibes', cursive; font-size: 5rem; color: #b8860b; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); opacity: 0; }
+        body.started h1 { animation: fadeSlideDown 1s ease-out 0.2s forwards; }
+        p.subtitle { font-size: 1.4rem; color: #6b5a4e; margin-top: 10px; font-style: italic; opacity: 0; }
+        body.started p.subtitle { animation: fadeSlideDown 1s ease-out 0.6s forwards; }
+        .instruction-note { font-size: 1.1rem; color: #d4af37; margin-top: 10px; font-style: italic; opacity: 0; }
+        body.started .instruction-note { animation: fadeSlideDown 1s ease-out 1s forwards, pulseText 2.5s infinite 2s; }
+        @keyframes pulseText { 0% { opacity: 0.6; } 50% { opacity: 1; text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); } 100% { opacity: 0.6; } }
+
+        /* --- Bouquet Container & Wrapper Styling --- */
+        .bouquet-container { position: relative; width: 100%; max-width: 800px; height: 600px; display: flex; justify-content: center; align-items: center; margin-top: 20px; }
+        .center-video-circle { position: absolute; top: 50%; left: 50%; width: 900px; height: 900px; border-radius: 50%; z-index: 0; pointer-events: none; -webkit-mask-image: radial-gradient(circle, black 40%, transparent 70%); mask-image: radial-gradient(circle, black 40%, transparent 70%); opacity: 0; }
+        body.started .center-video-circle { animation: dreamyEntrance 2.5s ease-out 0.4s forwards; }
+        .center-video-circle video { width: 100%; height: 100%; object-fit: cover; filter: sepia(50%) blur(4px) brightness(0.9) contrast(0.8); }
+
+        /* THE REPOSITIONED RIBBON (Down and Left) */
+        .bouquet-ribbon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            /* -60% moves it slightly left, 215px moves it down to the cluster base */
+            transform: translate(-40%, 100px) scale(1) !important;
+            width: 180px;
+            height: 45px;
+            background: linear-gradient(to right, #d4af37, #fadd75, #d4af37);
+            border-radius: 25px;
+            box-shadow: 0 8px 15px rgba(212, 175, 55, 0.5);
+            z-index: 50; /* Set to 50 to ensure it sits ON TOP of all photo cards */
+            opacity: 0;
+        }
+
+        /* Updated Entrance Animation to land at the new spot */
+        body.started .bouquet-ribbon { 
+            animation: popUpRibbonFinal 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.5s forwards; 
+        }
+
+        @keyframes popUpRibbonFinal {
+            to {
+                opacity: 1;
+                transform: translate(-60%, 215px) scale(0.6);
+            }
+        }
+        
+        .bouquet-ribbon::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 55px; height: 55px; background: radial-gradient(circle, #fadd75 30%, #cda630 100%); border-radius: 50%; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
+
+                /* --- Photo Gallery Styles --- */
+        .gallery { 
+            position: relative; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 5; 
+            pointer-events: none; 
+        }
+
+        /* 1. THE MISSING KEYFRAME: Defines the pulsing gold glow */
+      @keyframes autoGlow {
+    0% { 
+        box-shadow: 0 0 10px rgba(255, 20, 147, 0.2); 
+        border-color: #fce4ec; 
+    }
+    50% { 
+        /* Increased brightness and spread for the pink glow */
+        box-shadow: 0 0 35px rgba(255, 20, 147, 0.9); 
+        border-color: #ff1493; 
+    }
+    100% { 
+        box-shadow: 0 0 10px rgba(255, 20, 147, 0.2); 
+        border-color: #fce4ec; 
+    }
+}
+
+        @keyframes popUp { 
+            to { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--rot)); } 
+        }
+
+        .photo-card { 
+            background: #fff; 
+            padding: 10px; 
+            border-radius: 8px; 
+            /* Increased border thickness slightly to make the glow color more visible */
+            border: 2.5px solid #f0e6d2; 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            cursor: pointer; 
+            pointer-events: auto; 
+            --tx: -50%; 
+            --ty: -50%; 
+            --rot: 0deg; 
+            opacity: 0.8; 
+            transform: translate(var(--tx), calc(var(--ty) + 300px)) scale(0.1) rotate(var(--rot)); 
+            transition: transform 0.4s ease, box-shadow 0.4s ease, z-index 0.4s, border-color 0.4s; 
+        }
+
+        /* 2. ENABLING BOTH ANIMATIONS: Triggers the pop-up AND the continuous glow */
+        body.started .photo-card { 
+            animation: popUp 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+                    autoGlow 3s ease-in-out infinite 1.2s; /* Starts after popUp finishes */
+        }
+
+        .photo-card:hover { 
+            transform: translate(var(--tx), calc(var(--ty) - 10px)) scale(1.05) rotate(var(--rot)) !important; 
+            box-shadow: 0 20px 40px rgba(184, 11, 34, 0.7) !important; 
+            border-color: #d43769 !important; 
+            z-index: 30 !important; 
+            animation: none; /* Stops pulsing while you are looking at it */
+        }
+
+        .photo-card img { width: 150px; height: 210px; object-fit: cover; border-radius: 4px; display: block; filter: sepia(10%); transition: filter 0.3s; }
+        .photo-card:hover img { filter: sepia(0%); }
+
+        /* 3. THE FINAL RIBBON POSITION: Down-Left coordinates */
+        .bouquet-ribbon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            /* -60% moves it slightly left, 215px moves it down to the cluster base */
+            transform: translate(-60%, 215px) scale(0.6); 
+            width: 180px;
+            height: 45px;
+            background: linear-gradient(to right, #d4af37, #fadd75, #d4af37);
+            border-radius: 25px;
+            box-shadow: 0 8px 15px rgba(212, 175, 55, 0.5);
+            z-index: 50; 
+            opacity: 0;
+        }
+
+        @keyframes popUpRibbonFinal {
+            to { opacity: 1; transform: translate(-60%, 215px) scale(0.6); }
+        }
+
+        body.started .bouquet-ribbon { 
+            animation: popUpRibbonFinal 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.5s forwards; 
+        }
+
+        /* --- Photo Positioning --- */
+        .card1  { --tx: -50%;  --ty: -60%;  --rot: -3deg;  z-index: 12; animation-delay: 1.1s; }
+        .card2  { --tx: 0%;    --ty: -55%;  --rot: 8deg;   z-index: 11; animation-delay: 1.2s; }
+        .card3  { --tx: -100%; --ty: -50%;  --rot: -12deg; z-index: 10; animation-delay: 1.3s; }
+        .card4  { --tx: -30%;  --ty: -95%;  --rot: 4deg;   z-index: 9;  animation-delay: 1.4s; }
+        .card5  { --tx: 25%;   --ty: -85%;  --rot: 15deg;  z-index: 8;  animation-delay: 1.5s; }
+        .card6  { --tx: -110%; --ty: -80%;  --rot: -18deg; z-index: 7;  animation-delay: 1.6s; }
+        .card7  { --tx: 20%;   --ty: -10%;  --rot: 12deg;  z-index: 6;  animation-delay: 1.7s; }
+        .card8  { --tx: -110%; --ty: -5%;   --rot: -15deg; z-index: 5;  animation-delay: 1.8s; }
+        .card9  { --tx: 60%;   --ty: -35%;  --rot: 25deg;  z-index: 4;  animation-delay: 1.9s; }
+        .card10 { --tx: -150%; --ty: -30%;  --rot: -28deg; z-index: 3;  animation-delay: 2.0s; }
+        .card11 { --tx: -80%;  --ty: 20%;   --rot: -6deg;  z-index: 2;  animation-delay: 2.1s; }
+        .card12 { --tx: -10%;  --ty: 15%;   --rot: 8deg;   z-index: 1;  animation-delay: 2.2s; }
+
+        .fullscreen-overlay { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.92); justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; }
+        .fullscreen-overlay.active { display: flex; opacity: 1; }
+        .fullscreen-content { display: flex; flex-direction: column; align-items: center; max-width: 90%; max-height: 90%; }
+        .fullscreen-image { max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s ease; }
+        .fullscreen-overlay.active .fullscreen-image { transform: scale(1); }
+        .photo-details { text-align: center; color: #fff; margin-top: 20px; opacity: 0; transform: translateY(20px); transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s; }
+        .fullscreen-overlay.active .photo-details { opacity: 1; transform: translateY(0); }
+        .photo-date { font-family: 'Lora', serif; color: #fadd75; font-size: 1.5rem; margin: 0 0 8px 0; font-style: italic; }
+        .photo-desc { font-family: 'Lora', serif; font-size: 1.1rem; margin: 0; max-width: 600px; line-height: 1.5; }
+        .close-btn { position: absolute; top: 20px; right: 30px; font-size: 40px; font-weight: bold; color: #fff; cursor: pointer; transition: color 0.3s; z-index: 1001; }
+        .close-btn:hover { color: #d4af37; }
+        footer { text-align: center; padding: 20px; font-size: 1.1rem; color: #8c7a6e; position: absolute; bottom: 0; width: 100%; z-index: 2; background: linear-gradient(to top, rgba(255,246,230, 1), transparent); }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 3.5rem; margin-top: 20px; } p.subtitle { font-size: 1.1rem; padding: 0 20px; }
+            .instruction-note { font-size: 0.9rem; padding: 0 20px; } .bouquet-container { transform: scale(0.65); margin-top: -50px; }
+            .center-video-circle { width: 600px; height: 600px; } .bouquet-ribbon { transform: translate(-50%, 160px); } footer { font-size: 0.9rem; padding: 15px; }
+            .close-btn { top: 10px; right: 20px; font-size: 30px; } .photo-date { font-size: 1.2rem; }
+            .photo-desc { font-size: 1rem; padding: 0 15px; } .fullscreen-image { max-height: 60vh; }
+            #start-screen h2 { font-size: 3rem; padding: 0 20px; }
+            @keyframes slideFadeInLeftMobile { from { opacity: 0; left: -20%; } to { opacity: 1; left: 2%; } }
+            @keyframes slideFadeInRightMobile { from { opacity: 0; right: -20%; } to { opacity: 1; right: 2%; } }
+            body.started .video-left { animation-name: slideFadeInLeftMobile; }
+            body.started .video-right { animation-name: slideFadeInRightMobile; }
+            .video-container.landscape { width: 140px; height: 78px; }
+            .video-container.portrait { width: 78px; height: 140px; } .video-container { z-index: 100; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="palagi.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="start-screen">
+        <h2>A special gift for Abi...</h2>
+        <p class="password-prompt">Enter the date we became official to unlock:</p>
+        <input type="text" id="password-input" placeholder="MM/DD/YY" autocomplete="off">
+        <p id="error-message">Oops! That's not our special date. Try again!</p>
+        <button id="start-btn">Open your gift ❤️</button>
+    </div>
+
+    <div class="video-container video-left parallel-stack">
+    <div class="slot-portrait">
+        <video id="vid5" src="vide5.mp4" autoplay loop muted playsinline class="portrait-lock"></video>
+    </div>
+    <div class="slot-landscape">
+        <video id="vid2" src="vid2.mp4" autoplay loop muted playsinline class="landscape-lock"></video>
+    </div>
+</div>
+
+<div class="video-container video-right parallel-stack">
+    <div class="slot-portrait">
+        <video id="vid6" src="vid6.mp4" autoplay loop muted playsinline class="portrait-lock"></video>
+    </div>
+    <div class="slot-landscape">
+        <video id="vid3" src="vid3.mp4" autoplay loop muted playsinline class="landscape-lock"></video>
+    </div>
+</div>
+
+    <header>
+        <h1>Eric and Abi day!</h1>
+        <p class="subtitle">Happy Monthsary to my love! Every day is special with you.</p>
+    </header>
+
+    <main>
+        <div class="bouquet-container">
+            <div class="center-video-circle">
+                <video src="vid4.mp4" autoplay loop muted playsinline></video>
+            </div>
+            
+            <div class="bouquet-ribbon"></div>
+
+            <div class="gallery">
+                <div class="photo-card card1" data-date="Gala in Venice" data-desc="Maangas with love."><img src="pic1.jpg" alt="Memory 1"></div>
+                <div class="photo-card card2" data-date="Pressured but together" data-desc="Chowking in the midst of thesis"><img src="pic2.jpg" alt="Memory 2"></div>
+                <div class="photo-card card3" data-date="Ordinary Date" data-desc="Ordinary days turn into something special when you're around."><img src="pic3.jpg" alt="Memory 3"></div>
+                <div class="photo-card card4" data-date="Picture tayo yung maangas" data-desc="Enjoying the moment together, kahit maiiwan na ng friends."><img src="pic4.jpg" alt="Memory 4"></div>
+                <div class="photo-card card5" data-date="Abi with Daniel Padilla" data-desc="Ayan na nakapag papicture kana sa crush mo"><img src="pic5.jpg" alt="Memory 5"></div>
+                <div class="photo-card card6" data-date="First time Ride" data-desc="I know I'm charming, Baby."><img src="pic6.jpg" alt="Memory 6"></div>
+                <div class="photo-card card7" data-date="Walking na may kaunting Date" data-desc="Balik tayo dito ha."><img src="pic7.jpg" alt="Memory 7"></div>
+                <div class="photo-card card8" data-date="823m above sea level" data-desc="The first time we went to a high altitude."><img src="pic8.jpg" alt="Memory 8"></div>
+                <div class="photo-card card9" data-date="Family Legalization" data-desc="Always been happy being with your family."><img src="pic9.jpg" alt="Memory 9"></div>
+                <div class="photo-card card10" data-date="Proud Boyfriend" data-desc="A gorgeous and amazing girlfriend."><img src="pic10.jpg" alt="Memory 10"></div>
+                <div class="photo-card card11" data-date="Fresh Pa" data-desc="Blooming tayo dito. Hehe"><img src="pic11.jpg" alt="Memory 11"></div>
+                <div class="photo-card card12" data-date="Smile with Jealousy" data-desc="Thank you for making me feel assured, your exclusively mine."><img src="pic12.jpg" alt="Memory 12"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Created with love, for you. ❤️</p>
+    </footer>
+
+    <div class="fullscreen-overlay" id="fullscreenOverlay">
+        <span class="close-btn" id="closeBtn">&times;</span>
+        <div class="fullscreen-content">
+            <img src="" alt="Full Screen Memory" class="fullscreen-image" id="fullscreenImage">
+            <div class="photo-details" id="photoDetails">
+                <h3 class="photo-date" id="displayDate"></h3>
+                <p class="photo-desc" id="displayDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- START SCREEN & PASSWORD LOGIC ---
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const passwordInput = document.getElementById('password-input');
+        const errorMessage = document.getElementById('error-message');
+        const bgMusic = document.getElementById('bgMusic');
+
+        function checkPassword() {
+            const enteredPassword = passwordInput.value.trim();
+            
+            if (enteredPassword === "04/02/25") {
+                // Correct Password!
+                errorMessage.style.opacity = '0';
+                passwordInput.classList.remove('shake-error');
+                
+                // Play music
+                bgMusic.play().catch(error => console.log("Audio play failed:", error));
+                
+                // Fade out screen
+                startScreen.style.opacity = '0';
+                setTimeout(() => { startScreen.style.visibility = 'hidden'; }, 800);
+
+                // Trigger animations
+                document.body.classList.add('started');
+            } else {
+                // Wrong Password
+                errorMessage.style.opacity = '1';
+                
+                // Trigger shake animation
+                passwordInput.classList.remove('shake-error');
+                void passwordInput.offsetWidth; // trigger reflow
+                passwordInput.classList.add('shake-error');
+                
+                // Clear input so she can try again
+                passwordInput.value = '';
+            }
+        }
+
+        startBtn.addEventListener('click', checkPassword);
+
+        // Allow her to just press "Enter" on her keyboard
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // --- Floating Hearts Animation ---
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            const heartTypes = ['❤️', '✨', '💖', '🌸', '🌹'];
+            heart.innerText = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 5 + 5 + 's';
+            heart.style.fontSize = Math.random() * 1.5 + 0.5 + 'rem';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 10000);
+        }
+        setInterval(createHeart, 400);
+
+        // Simplified Video Logic: Fixed Landscape
+        const videoContainers = document.querySelectorAll('.video-container');
+
+        videoContainers.forEach(container => {
+            const video = container.querySelector('video');
+
+            // Remove detection and toggles. Just ensure they are ready to play.
+            video.addEventListener('loadedmetadata', function() {
+                container.classList.add('landscape');
+                container.classList.remove('portrait');
+            });
+        });
+
+        // --- Full-Screen Image Viewer Logic ---
+        const overlay = document.getElementById('fullscreenOverlay');
+        const fullImage = document.getElementById('fullscreenImage');
+        const displayDate = document.getElementById('displayDate');
+        const displayDesc = document.getElementById('displayDesc');
+        const closeBtn = document.getElementById('closeBtn');
+        const photoCards = document.querySelectorAll('.photo-card');
+
+        function openFullscreen(imgSrc, dateText, descText) {
+            fullImage.src = imgSrc;
+            displayDate.innerText = dateText;
+            displayDesc.innerText = descText;
+            overlay.classList.add('active');
+        }
+
+        function closeFullscreen() {
+            overlay.classList.remove('active');
+            setTimeout(() => { 
+                fullImage.src = ''; 
+                displayDate.innerText = '';
+                displayDesc.innerText = '';
+            }, 300);
+        }
+
+        photoCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const img = this.querySelector('img');
+                const date = this.getAttribute('data-date') || '';
+                const desc = this.getAttribute('data-desc') || '';
+                if (img) {
+                    openFullscreen(img.src, date, desc);
+                }
+            });
+        });
+
+        closeBtn.addEventListener('click', closeFullscreen);
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay || e.target === document.querySelector('.fullscreen-content')) {
+                closeFullscreen();
+            }
+        });
+    </script>
+</body>
+</html>
