@@ -253,20 +253,57 @@ body.started .video-right { animation: slideFadeInRight 1.2s cubic-bezier(0.25, 
         .close-btn:hover { color: #d4af37; }
         footer { text-align: center; padding: 20px; font-size: 1.1rem; color: #8c7a6e; position: absolute; bottom: 0; width: 100%; z-index: 2; background: linear-gradient(to top, rgba(255,246,230, 1), transparent); }
 
-        @media (max-width: 768px) {
-            h1 { font-size: 3.5rem; margin-top: 20px; } p.subtitle { font-size: 1.1rem; padding: 0 20px; }
-            .instruction-note { font-size: 0.9rem; padding: 0 20px; } .bouquet-container { transform: scale(0.65); margin-top: -50px; }
-            .center-video-circle { width: 600px; height: 600px; } .bouquet-ribbon { transform: translate(-50%, 160px); } footer { font-size: 0.9rem; padding: 15px; }
-            .close-btn { top: 10px; right: 20px; font-size: 30px; } .photo-date { font-size: 1.2rem; }
-            .photo-desc { font-size: 1rem; padding: 0 15px; } .fullscreen-image { max-height: 60vh; }
-            #start-screen h2 { font-size: 3rem; padding: 0 20px; }
-            @keyframes slideFadeInLeftMobile { from { opacity: 0; left: -20%; } to { opacity: 1; left: 2%; } }
-            @keyframes slideFadeInRightMobile { from { opacity: 0; right: -20%; } to { opacity: 1; right: 2%; } }
-            body.started .video-left { animation-name: slideFadeInLeftMobile; }
-            body.started .video-right { animation-name: slideFadeInRightMobile; }
-            .video-container.landscape { width: 140px; height: 78px; }
-            .video-container.portrait { width: 78px; height: 140px; } .video-container { z-index: 100; }
-        }
+         @media (max-width: 768px) {
+    /* --- Fix the Header & Bouquet Scale --- */
+    h1 { font-size: 3.5rem; margin-top: 20px; } 
+    p.subtitle { font-size: 1.1rem; padding: 0 20px; }
+    .instruction-note { font-size: 0.9rem; padding: 0 20px; } 
+    .bouquet-container { transform: scale(0.55); margin-top: -60px; }
+    .center-video-circle { width: 600px; height: 600px; } 
+    .bouquet-ribbon { transform: translate(-50%, 160px); } 
+    footer { font-size: 0.9rem; padding: 15px; }
+    
+    /* --- Fix the Parallel Stacks for Mobile --- */
+    .parallel-stack {
+        width: 110px !important; /* Shrink stack width to fit edges */
+        gap: 10px; /* Less space between the 3 vertical videos */
+    }
+
+    /* --- Resize the Slots so they don't crush the center --- */
+    .slot-portrait {
+        width: 80px !important;
+        height: 140px !important;
+        border-radius: 8px;
+    }
+
+    .slot-landscape {
+        width: 110px !important;
+        height: 65px !important;
+        border-radius: 8px;
+    }
+
+    /* --- Adjust the Rotated Videos for the smaller mobile slots --- */
+    .landscape-lock {
+        width: 65px !important;  /* Match mobile slot height */
+        height: 110px !important; /* Match mobile slot width */
+        /* Lower the scale slightly so it doesn't over-zoom on phones */
+        transform: translate(-50%, -50%) rotate(270deg) scale(1.3) !important;
+    }
+
+    /* --- Push the stacks to the very edges of the screen --- */
+    @keyframes slideFadeInLeftMobile { from { opacity: 0; left: -20%; } to { opacity: 1; left: 1%; } }
+    @keyframes slideFadeInRightMobile { from { opacity: 0; right: -20%; } to { opacity: 1; right: 1%; } }
+    
+    body.started .video-left { animation-name: slideFadeInLeftMobile; }
+    body.started .video-right { animation-name: slideFadeInRightMobile; }
+    
+    /* Fullscreen tweaks */
+    .close-btn { top: 10px; right: 20px; font-size: 30px; } 
+    .photo-date { font-size: 1.2rem; }
+    .photo-desc { font-size: 1rem; padding: 0 15px; } 
+    .fullscreen-image { max-height: 60vh; }
+    #start-screen h2 { font-size: 3rem; padding: 0 20px; }
+}
     </style>
 </head>
 <body>
@@ -464,4 +501,5 @@ body.started .video-right { animation: slideFadeInRight 1.2s cubic-bezier(0.25, 
         });
     </script>
 </body>
+
 </html>
